@@ -58,11 +58,12 @@ namespace SnakesWithABrain
 
         //Instance Options
         bool draw = false;
+        bool updateUi = false;
         bool paused = false;
         bool trainingReady = false;
         
         SnakeManager snakeManager;//Starts null. Setting to new initialized lists and the snakes in them.                                                          
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -76,8 +77,12 @@ namespace SnakesWithABrain
             {
                 cmbTrainings.Items.Add(s);
             }
-            
-            cmbTrainings.SelectedIndex = 0;            
+
+            cmbTrainings.SelectedIndex = 0;
+
+            gridTrainingSession.Visibility = Visibility.Visible;
+            gridGameData.Visibility = Visibility.Hidden;
+            gridCharts.Visibility = Visibility.Hidden;
         }
 
         #region Grid Functions
@@ -181,6 +186,73 @@ namespace SnakesWithABrain
             snakeManager.NextSnake();
             NewFood();
         }
+        /// <summary>
+        /// Updates UI Text and charts
+        /// </summary>
+        void UpdateUi()
+        {
+            lblLife.Content = $"Life: {snakeManager.currentSnake.Life} | Distance: {snakeManager.currentSnake.DistanceFromFood.ToString("0.000")}";
+            lblCurrentFitness.Content = $"Fitness: {snakeManager.currentSnake.Fitness.ToString("0.000")} | Score: {snakeManager.currentSnake.Score.ToString("0.000")}";
+            lblGenInfo.Content = $"Generation: {Globals.CurrentTrainingSession.generation} | Snake Index: {Globals.CurrentTrainingSession.snakeIndex}";
+
+            string keepers = "Best: ";
+            for (int e = 0; e < snakeManager.bestSnakes.Count; e++)
+            {
+                Snake temp = snakeManager.bestSnakes[e];
+                keepers += $"\n{temp.Fitness.ToString("0.000")} ({temp.Score.ToString("0.000")} | {temp.FoodEaten}) at {temp.TimeOfDeath}";
+            }
+            lblBest.Content = keepers;
+
+            if (snakeManager.currentSnake.DeathType != Enums.DeathType.Starve)
+            {
+                lblCurrentFitness.Background = new SolidColorBrush(Colors.Red);
+            }
+            else
+            {
+                lblCurrentFitness.Background = new SolidColorBrush(Colors.White);
+            }
+
+            lblBestEver.Content = $"Best Fitness Ever: {Globals.CurrentTrainingSession.bestFitnessEver}\tMost Food Ever: {Globals.CurrentTrainingSession.mostFoodEver}";
+
+            //Charts
+            if (snakeManager.bestAvgFitnessesPerGeneration.Count > 0)
+            {
+                double chartYMin = snakeManager.bestAvgFitnessesPerGeneration.Min();
+                double chartYMax = snakeManager.bestAvgFitnessesPerGeneration.Max();
+
+                //sequential order of last X generations.
+                double[] nums = new double[200];
+                if (snakeManager.bestAvgFitnessesPerGeneration.Count < nums.Length)
+                {
+                    nums = new double[snakeManager.bestAvgFitnessesPerGeneration.Count];
+                }
+
+                for (int i = nums.Length - 1; i >= 0; i--)
+                {
+                    nums[nums.Length - 1 - i] = Globals.CurrentTrainingSession.generation - 1 - i;
+                }
+                UpdateChart(plotAvgFitness, nums, snakeManager.bestAvgFitnessesPerGeneration.ToArray(), chartYMin, chartYMax);
+            }
+
+            if (snakeManager.mostFoodEatenPerGeneration.Count > 0)
+            {
+                double chartYMin = 0;
+                double chartYMax = snakeManager.mostFoodEatenPerGeneration.Max() + 1;
+
+                double[] nums = new double[200];
+                if (snakeManager.mostFoodEatenPerGeneration.Count < nums.Length)
+                {
+                    nums = new double[snakeManager.mostFoodEatenPerGeneration.Count];
+                }
+
+                for (int i = nums.Length - 1; i >= 0; i--)
+                {
+                    nums[nums.Length - 1 - i] = Globals.CurrentTrainingSession.generation - 1 - i;
+                }
+
+                UpdateChart(plotFoodEaten, nums, snakeManager.mostFoodEatenPerGeneration.ToArray(), chartYMin, chartYMax);
+            }
+        }
 
         /// <summary>
         /// Updates squares representing the snake and food and updates the UI on the right panel.
@@ -206,68 +278,7 @@ namespace SnakesWithABrain
                 
             }
 
-            blockArray[Globals.CurrentTrainingSession.foodX, Globals.CurrentTrainingSession.foodY].Fill = new SolidColorBrush(Colors.Green); //change block to green, this is 'food'
-            lblLife.Content = $"Life: {snakeManager.currentSnake.Life} | Distance: {snakeManager.currentSnake.DistanceFromFood.ToString("0.000")}";
-            lblCurrentFitness.Content = $"Fit: {snakeManager.currentSnake.Fitness.ToString("0.000")}\tScore: {snakeManager.currentSnake.Score.ToString("0.000")}";
-            lblGenInfo.Content = $"Generation: {Globals.CurrentTrainingSession.generation}\tSnake Index: {Globals.CurrentTrainingSession.snakeIndex}";
-
-            string keepers = "Best: ";
-            for (int e = 0; e < snakeManager.bestSnakes.Count; e++)
-            {
-                Snake temp = snakeManager.bestSnakes[e];
-                keepers += $"\n{temp.Fitness.ToString("0.000")} ({temp.Score.ToString("0.000")} | {temp.FoodEaten}) at {temp.TimeOfDeath}";
-            }
-            lblBest.Content = keepers;
-
-            if (snakeManager.currentSnake.DeathType != Enums.DeathType.Starve)
-            {
-                lblCurrentFitness.Background = new SolidColorBrush(Colors.Red);
-            }
-            else
-            {
-                lblCurrentFitness.Background = new SolidColorBrush(Colors.White);
-            }
-
-            lblBestEver.Content = $"Best Fitness Ever: {Globals.CurrentTrainingSession.bestFitnessEver}\tMost Food Ever: {Globals.CurrentTrainingSession.mostFoodEver}";
-
-            //Charts
-            if(snakeManager.bestAvgFitnessesPerGeneration.Count > 0)
-            {
-                double chartYMin = snakeManager.bestAvgFitnessesPerGeneration.Min();
-                double chartYMax = snakeManager.bestAvgFitnessesPerGeneration.Max();
-
-                //sequential order of last X generations.
-                double[] nums = new double[200];
-                if(snakeManager.bestAvgFitnessesPerGeneration.Count < nums.Length)
-                {
-                    nums = new double[snakeManager.bestAvgFitnessesPerGeneration.Count];
-                }
-
-                for (int i = nums.Length-1; i >= 0; i--)
-                {
-                    nums[nums.Length-1 - i] = Globals.CurrentTrainingSession.generation-1 - i;
-                }
-                UpdateChart(plotAvgFitness, nums, snakeManager.bestAvgFitnessesPerGeneration.ToArray(), chartYMin, chartYMax);
-            }
-
-            if (snakeManager.mostFoodEatenPerGeneration.Count > 0) 
-            {
-                double chartYMin = 0;
-                double chartYMax = snakeManager.mostFoodEatenPerGeneration.Max() + 1;
-
-                double[] nums = new double[200];
-                if(snakeManager.mostFoodEatenPerGeneration.Count < nums.Length)
-                {
-                    nums = new double[snakeManager.mostFoodEatenPerGeneration.Count];
-                }
-
-                for (int i = nums.Length-1; i >= 0; i--)
-                {
-                    nums[nums.Length - 1 - i] = Globals.CurrentTrainingSession.generation-1 - i;
-                }
-
-                UpdateChart(plotFoodEaten, nums, snakeManager.mostFoodEatenPerGeneration.ToArray(), chartYMin, chartYMax);
-            }           
+            blockArray[Globals.CurrentTrainingSession.foodX, Globals.CurrentTrainingSession.foodY].Fill = new SolidColorBrush(Colors.Green); //change block to green, this is 'food'                    
         }
         void NewFood()
         {
@@ -296,6 +307,11 @@ namespace SnakesWithABrain
             {
                 timer.Stop();
                 return;
+            }
+
+            if (updateUi)
+            {
+                UpdateUi();
             }
 
             if (draw)
@@ -434,6 +450,7 @@ namespace SnakesWithABrain
             txtHeight.IsEnabled = false;
             txtWidth.IsEnabled = false;
             txtDeathChance.IsEnabled = false;
+            txtMutateChance.IsEnabled = false;
             chkCanWrap.IsEnabled = false;           
             cmbTrainings.IsEnabled = false;
             cmbInputType.IsEnabled = false;
@@ -460,6 +477,7 @@ namespace SnakesWithABrain
                 Globals.CurrentTrainingSession.arrayX = int.Parse(txtWidth.Text);
                 Globals.CurrentTrainingSession.arrayY = int.Parse(txtHeight.Text);
                 Globals.CurrentTrainingSession.randomDeathChance = int.Parse(txtDeathChance.Text);
+                Globals.CurrentTrainingSession.mutateChance = int.Parse(txtMutateChance.Text);
                 cmbTrainings.Items.Add(Globals.CurrentTrainingSession.GUID);
                 cmbTrainings.SelectedIndex = cmbTrainings.Items.Count - 1;
             }
@@ -470,6 +488,7 @@ namespace SnakesWithABrain
                 txtWidth.Text = Globals.CurrentTrainingSession.arrayX.ToString();
                 txtHeight.Text = Globals.CurrentTrainingSession.arrayY.ToString();
                 txtDeathChance.Text = Globals.CurrentTrainingSession.randomDeathChance.ToString();
+                txtMutateChance.Text = Globals.CurrentTrainingSession.mutateChance.ToString();
 
 
 
@@ -529,6 +548,51 @@ namespace SnakesWithABrain
             paused = true;    
             sldSimSpeed.IsEnabled = false;
             btnStop.IsEnabled = false;
+        }
+
+        private void btnTrainingSession_Click(object sender, RoutedEventArgs e)
+        {
+            gridTrainingSession.Visibility = Visibility.Visible;
+            gridGameData.Visibility = Visibility.Hidden;
+            gridCharts.Visibility = Visibility.Hidden;
+        }
+
+        private void btnGameData_Click(object sender, RoutedEventArgs e)
+        {
+            gridTrainingSession.Visibility = Visibility.Hidden;
+            gridGameData.Visibility = Visibility.Visible;
+            gridCharts.Visibility = Visibility.Hidden;
+        }
+
+        private void btnCharts_Click(object sender, RoutedEventArgs e)
+        {
+            gridTrainingSession.Visibility = Visibility.Hidden;
+            gridGameData.Visibility = Visibility.Hidden;
+            gridCharts.Visibility = Visibility.Visible;
+        }
+
+        private void chkUpdateUi_Checked(object sender, RoutedEventArgs e)
+        {
+            if (chkUpdateUi.IsChecked == true)
+            {
+                updateUi = true;
+            }
+            else
+            {
+                updateUi = false;
+            }
+        }
+
+        private void chkUpdateUi_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (chkUpdateUi.IsChecked == true)
+            {
+                updateUi = true;
+            }
+            else
+            {
+                updateUi = false;
+            }
         }
     }
 }
