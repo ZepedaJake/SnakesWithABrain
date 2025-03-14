@@ -262,7 +262,7 @@ namespace SnakesWithABrain.Models
 
             Segments.Add(new Block(PositionX, PositionY));
 
-            if (Segments.Count > FoodEaten + Globals.CurrentTrainingSession.startingLength || Segments.Count > Globals.CurrentTrainingSession.maxSegmentLength)
+            if (Segments.Count > (FoodEaten + Globals.CurrentTrainingSession.startingLength) || (Globals.CurrentTrainingSession.maxSegmentLength > -1 && Segments.Count > Globals.CurrentTrainingSession.maxSegmentLength))
             {
                 Segments.RemoveAt(0);
             }

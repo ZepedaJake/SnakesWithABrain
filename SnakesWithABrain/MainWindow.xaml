@@ -54,6 +54,17 @@
                 <TextBox x:Name="txtDeathChance" Text="5" VerticalContentAlignment="Center" Width="50" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,130,0,0"/>
                 <Label Content="Mutate Chance:" VerticalAlignment="Top" HorizontalAlignment="Left" Height="25" Margin="10,160,0,0"></Label>
                 <TextBox x:Name="txtMutateChance" Text="10" VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50" Height="25" Margin="105,160,0,0"></TextBox>
+                <Label Content="Gen Size:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,210,0,0"/>
+                <TextBox x:Name="txtGenSize" Text="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="90,210,0,0" Width="50" Height="25" VerticalContentAlignment="Center"></TextBox>
+                <Label Content="Keep Count:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,240,0,0"/>
+                <TextBox x:Name="txtKeepCount" Text="10" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="90,240,0,0" Width="50" Height="25" VerticalContentAlignment="Center"></TextBox>
+                <Label Content="Breed Count:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,270,0,0"/>
+                <TextBox x:Name="txtBreedCount" Text="10" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="90,270,0,0" Width="50" Height="25" VerticalContentAlignment="Center"></TextBox>
+                <Label Content="Mutate Count:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,300,0,0"/>
+                <TextBox x:Name="txtMutateCount" Text="10" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,300,0,0" Width="50" Height="25" VerticalContentAlignment="Center"></TextBox>
+                <Label Content="Max Length:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,360,0,0"/>
+                <TextBox x:Name="txtMaxLength" Text="-1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="90,360,0,0" Width="50" Height="25" VerticalContentAlignment="Center"></TextBox>
+                <Label Content="(-1 = no max)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="150,360,0,0"/>
             </Grid>
             <Grid x:Name="gridGameData" Visibility="Hidden">
                 <Label Content="Tick Speed" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Margin="10,10,0,0" Height="26" Width="67"/>

@@ -15,10 +15,10 @@
         public float foodEatScaling = 1.5f;
         public float crashScaling = 1.2f;
         public float eatSelfScaling = 1.2f;
-        public float starveScaling = 1f;
-        public int inputType = 1;
+        public float starveScaling = 1f;       
         public int startingLength = 0;
         public int maxSegmentLength = 999;
+        public int inputType = 1;
         //1 = Surrounding blocked area and segment count
         //2 = Surrounding Coords and are they blocked
         //3 = food, self, whole board

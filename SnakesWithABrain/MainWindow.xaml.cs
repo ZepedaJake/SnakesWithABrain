@@ -478,6 +478,12 @@ namespace SnakesWithABrain
                 Globals.CurrentTrainingSession.arrayY = int.Parse(txtHeight.Text);
                 Globals.CurrentTrainingSession.randomDeathChance = int.Parse(txtDeathChance.Text);
                 Globals.CurrentTrainingSession.mutateChance = int.Parse(txtMutateChance.Text);
+                Globals.CurrentTrainingSession.genSize = int.Parse(txtGenSize.Text);
+                Globals.CurrentTrainingSession.keepCount = int.Parse(txtKeepCount.Text);
+                Globals.CurrentTrainingSession.breedCount = int.Parse(txtBreedCount.Text);
+                Globals.CurrentTrainingSession.mutateCount = int.Parse(txtMutateCount.Text);
+                Globals.CurrentTrainingSession.maxSegmentLength = int.Parse(txtMaxLength.Text);
+
                 cmbTrainings.Items.Add(Globals.CurrentTrainingSession.GUID);
                 cmbTrainings.SelectedIndex = cmbTrainings.Items.Count - 1;
             }
@@ -489,7 +495,11 @@ namespace SnakesWithABrain
                 txtHeight.Text = Globals.CurrentTrainingSession.arrayY.ToString();
                 txtDeathChance.Text = Globals.CurrentTrainingSession.randomDeathChance.ToString();
                 txtMutateChance.Text = Globals.CurrentTrainingSession.mutateChance.ToString();
-
+                txtGenSize.Text = Globals.CurrentTrainingSession.genSize.ToString();
+                txtKeepCount.Text = Globals.CurrentTrainingSession.keepCount.ToString();
+                txtBreedCount.Text = Globals.CurrentTrainingSession.breedCount.ToString();
+                txtMutateCount.Text = Globals.CurrentTrainingSession.mutateCount.ToString();
+                txtMaxLength.Text = Globals.CurrentTrainingSession.maxSegmentLength.ToString();
 
 
                 //thisGenLSTMs = FileManager.LoadLSTMs(Globals.CurrentTrainingSession.GUID);

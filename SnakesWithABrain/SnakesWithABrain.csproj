@@ -7,6 +7,7 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="Styles\" />
     <Folder Include="WindowsAndPages\" />
   </ItemGroup>
   <ItemGroup>
