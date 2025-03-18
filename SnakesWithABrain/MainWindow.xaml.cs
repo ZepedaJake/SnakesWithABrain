@@ -303,6 +303,11 @@ namespace SnakesWithABrain
 
         void TimerTick(object sender, EventArgs e)
         {
+            if (paused)
+            {
+                return;
+            }
+
             if (!trainingReady)
             {
                 timer.Stop();
@@ -334,21 +339,16 @@ namespace SnakesWithABrain
             {
                 NewFood();
             }
-
-           
-
-           
-            
-            
+                                              
             //if pause called and at start of new index, stop timer.
-            if(paused && Globals.CurrentTrainingSession.snakeIndex == 0)
-            {
-                timer.Stop();
+            //if(paused && Globals.CurrentTrainingSession.snakeIndex == 0)
+            //{
+                //timer.Stop();
                 //FileManager.SaveTrainingSession(Globals.CurrentTrainingSession);
                 //FileManager.SaveLSTMs(Globals.CurrentTrainingSession.GUID, thisGenLSTMs);
-                btnStart.IsEnabled = true;
-                btnStop.IsEnabled = false;
-            }
+                //btnStart.IsEnabled = true;
+                //btnStop.IsEnabled = false;
+            //}
         }               
                       
         void UpdateChart(ScottPlot.WPF.WpfPlot chart, double[] xVals, double[] yVals, double yLow = 0, double yHigh = 10000)
@@ -439,7 +439,7 @@ namespace SnakesWithABrain
             if (paused)
             {
                 paused = false;
-                timer.Start();                
+                //timer.Start();                
                 return;
             }
 
@@ -451,6 +451,14 @@ namespace SnakesWithABrain
             txtWidth.IsEnabled = false;
             txtDeathChance.IsEnabled = false;
             txtMutateChance.IsEnabled = false;
+
+            txtBreedCount.IsEnabled = false;
+            txtGenSize.IsEnabled = false;
+            txtKeepCount.IsEnabled = false;
+            txtMutateCount.IsEnabled = false;
+            txtMaxLength.IsEnabled = false;
+ 
+
             chkCanWrap.IsEnabled = false;           
             cmbTrainings.IsEnabled = false;
             cmbInputType.IsEnabled = false;
@@ -558,6 +566,7 @@ namespace SnakesWithABrain
             paused = true;    
             sldSimSpeed.IsEnabled = false;
             btnStop.IsEnabled = false;
+            btnStart.IsEnabled = true;
         }
 
         private void btnTrainingSession_Click(object sender, RoutedEventArgs e)

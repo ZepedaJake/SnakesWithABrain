@@ -1,4 +1,6 @@
-﻿namespace SnakesWithABrain
+﻿using SnakesWithABrain.Enums;
+
+namespace SnakesWithABrain
 {
     public class TrainingSession
     {
@@ -22,6 +24,8 @@
         //1 = Surrounding blocked area and segment count
         //2 = Surrounding Coords and are they blocked
         //3 = food, self, whole board
+
+        public NetworkType networkType = NetworkType.LSTMCell;
 
         //gets updated during runtime.
         public int generation = 1;
