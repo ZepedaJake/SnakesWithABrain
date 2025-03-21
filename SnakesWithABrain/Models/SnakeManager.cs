@@ -68,27 +68,26 @@ namespace SnakesWithABrain.Models
 
         public void NextSnake()
         {
+            Globals.CurrentTrainingSession.snakeIndex++;//increment then select snake
             //Check if end of generation has been reached
             if (Globals.CurrentTrainingSession.snakeIndex >= Globals.CurrentTrainingSession.genSize)
             {
                 GenerationEnd();
                 GenerationStart();
+                Globals.CurrentTrainingSession.snakeIndex++;//Gen end resets index to -1, so re-increment it.
             }
 
             //Select next snake in list, set life based on board size, reset score. set snake's generation, reset snake's death type.
-           
-
 
             currentSnake = thisGenerationSnakes[Globals.CurrentTrainingSession.snakeIndex];            
-            currentSnake.PrepareForTraining();
-            Globals.CurrentTrainingSession.snakeIndex++;//increment after selecting snake so next time the next snake is selected
+            currentSnake.PrepareForTraining();           
         }
         public void GenerationStart()
         {
             //reset current snake list. and increment generation because we are preparing the next generation.
             thisGenerationSnakes.Clear();
             Globals.CurrentTrainingSession.generation++;
-            Globals.CurrentTrainingSession.snakeIndex = 0;
+            Globals.CurrentTrainingSession.snakeIndex = -1;
 
             //let the best recorded snakes compete again
             for (int a = 0; a < Globals.CurrentTrainingSession.keepCount; a++) //recompete
@@ -138,7 +137,7 @@ namespace SnakesWithABrain.Models
 
         public void GenerationEnd()
         {
-            Globals.CurrentTrainingSession.snakeIndex = 0;
+            Globals.CurrentTrainingSession.snakeIndex = -1;
             double bestFitnessThisGen = 0;
             Snake bestSnakeThisGeneration = thisGenerationSnakes.OrderByDescending(x => x.Fitness).First();
             Snake hungriestSnakeThisGeneration = thisGenerationSnakes.OrderByDescending(x => x.FoodEaten).First();

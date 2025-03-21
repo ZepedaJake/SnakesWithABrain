@@ -60,6 +60,7 @@ namespace SnakesWithABrain
         bool draw = false;
         bool updateUi = false;
         bool paused = false;
+        bool stopped = false;
         bool trainingReady = false;
         
         SnakeManager snakeManager;//Starts null. Setting to new initialized lists and the snakes in them.                                                          
@@ -308,6 +309,11 @@ namespace SnakesWithABrain
                 return;
             }
 
+            if (stopped && Globals.CurrentTrainingSession.snakeIndex == 0)
+            {                                                                                
+                return;                           
+            }
+
             if (!trainingReady)
             {
                 timer.Stop();
@@ -327,7 +333,7 @@ namespace SnakesWithABrain
             if (snakeManager.currentSnake.Life <= 0)
             {
                 timer.Stop();//pause timer for a moment.
-                //ResetGrid();
+                //ResetGrid();                
                 snakeManager.NextSnake();
                 timer.Start();
             }
@@ -435,11 +441,25 @@ namespace SnakesWithABrain
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
             btnStop.IsEnabled = true;
+            btnPause.IsEnabled = true;
+            btnSave.IsEnabled = false;
             btnStart.IsEnabled = false;
             if (paused)
             {
                 paused = false;
+                btnStart.IsEnabled = false;
+                btnStop.IsEnabled = true;
+                btnSave.IsEnabled = false;
                 //timer.Start();                
+                return;
+            }
+
+            if (stopped)
+            {
+                stopped = false;
+                btnStart.IsEnabled = false;
+                btnStop.IsEnabled = true;
+                btnSave.IsEnabled = false;
                 return;
             }
 
@@ -562,10 +582,22 @@ namespace SnakesWithABrain
         }
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
-        {            
-            paused = true;    
+        {
+            stopped = true;
             sldSimSpeed.IsEnabled = false;
             btnStop.IsEnabled = false;
+            btnStart.IsEnabled = true;
+            btnStop.IsEnabled = false;
+            btnSave.IsEnabled = true;
+        }
+
+        private void btnPause_Click(object sender, RoutedEventArgs e)
+        {
+            paused = true;
+            sldSimSpeed.IsEnabled = false;
+            btnStop.IsEnabled = false;
+            btnPause.IsEnabled = false;
+            btnSave.IsEnabled = false;
             btnStart.IsEnabled = true;
         }
 
@@ -613,5 +645,7 @@ namespace SnakesWithABrain
                 updateUi = false;
             }
         }
+
+        
     }
 }

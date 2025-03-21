@@ -29,7 +29,7 @@ namespace SnakesWithABrain
 
         //gets updated during runtime.
         public int generation = 1;
-        public int snakeIndex = 0;
+        public int snakeIndex = -1;
         public int foodX = 0;
         public int foodY = 0;
         public double bestFitnessEver = 0;
