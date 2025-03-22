@@ -310,7 +310,9 @@ namespace SnakesWithABrain
             }
 
             if (stopped && Globals.CurrentTrainingSession.snakeIndex == 0)
-            {                                                                                
+            {
+                btnStart.IsEnabled = true;    
+                btnSave.IsEnabled = true;
                 return;                           
             }
 
@@ -344,17 +346,7 @@ namespace SnakesWithABrain
             if (Globals.CurrentTrainingSession.newFoodNeeded)
             {
                 NewFood();
-            }
-                                              
-            //if pause called and at start of new index, stop timer.
-            //if(paused && Globals.CurrentTrainingSession.snakeIndex == 0)
-            //{
-                //timer.Stop();
-                //FileManager.SaveTrainingSession(Globals.CurrentTrainingSession);
-                //FileManager.SaveLSTMs(Globals.CurrentTrainingSession.GUID, thisGenLSTMs);
-                //btnStart.IsEnabled = true;
-                //btnStop.IsEnabled = false;
-            //}
+            }                                              
         }               
                       
         void UpdateChart(ScottPlot.WPF.WpfPlot chart, double[] xVals, double[] yVals, double yLow = 0, double yHigh = 10000)
@@ -444,22 +436,16 @@ namespace SnakesWithABrain
             btnPause.IsEnabled = true;
             btnSave.IsEnabled = false;
             btnStart.IsEnabled = false;
+
             if (paused)
             {
-                paused = false;
-                btnStart.IsEnabled = false;
-                btnStop.IsEnabled = true;
-                btnSave.IsEnabled = false;
-                //timer.Start();                
+                paused = false;                   
                 return;
             }
 
             if (stopped)
             {
                 stopped = false;
-                btnStart.IsEnabled = false;
-                btnStop.IsEnabled = true;
-                btnSave.IsEnabled = false;
                 return;
             }
 
@@ -586,9 +572,7 @@ namespace SnakesWithABrain
             stopped = true;
             sldSimSpeed.IsEnabled = false;
             btnStop.IsEnabled = false;
-            btnStart.IsEnabled = true;
-            btnStop.IsEnabled = false;
-            btnSave.IsEnabled = true;
+            btnPause.IsEnabled = false;
         }
 
         private void btnPause_Click(object sender, RoutedEventArgs e)
@@ -646,6 +630,10 @@ namespace SnakesWithABrain
             }
         }
 
-        
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            FileManager.SaveTrainingSession(Globals.CurrentTrainingSession);
+            //FileManager.SaveLSTMs(Globals.CurrentTrainingSession.GUID, thisGenLSTMs);
+        }
     }
 }

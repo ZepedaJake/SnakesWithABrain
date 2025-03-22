@@ -88,7 +88,8 @@ namespace SnakesWithABrain
             {
                 Directory.CreateDirectory(filePath);
             }
-            string fileName = Path.Combine(filePath, $"{saveMe.GUID}.tsess");
+
+            string fileName = Path.Combine(filePath, $"Session_{saveMe.GUID}.xml");
             using(StreamWriter sw = new StreamWriter(fileName))
             {
                 xsTrainingSession.Serialize(sw, saveMe);
@@ -98,8 +99,8 @@ namespace SnakesWithABrain
         public static TrainingSession LoadTrainingSession(string guid)
         {
             TrainingSession returnMe = new TrainingSession();
-            string filePath = Path.Combine(localPath, "TrainingSesions", guid);
-            string file = Path.Combine(filePath, $"{guid}.tsess");
+            string filePath = Path.Combine(localPath, "TrainingSessions", guid);
+            string file = Path.Combine(filePath, $"Session_{guid}.xml");
             if (File.Exists(file))
             {
                 using (StreamReader sr = new StreamReader(file)) 

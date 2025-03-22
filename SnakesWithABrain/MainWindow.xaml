@@ -46,7 +46,7 @@
                 <Button x:Name="btnStart" Content="Start" Width="120" Height="25" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,50" Click="btnStart_Click"/>
                 <Button x:Name="btnStop" IsEnabled="false" Content="Stop on Gen" Width="120" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,50" Click="btnStop_Click"/>
                 <Button x:Name="btnPause" IsEnabled="false" Content="Pause" Width="120" Height="25" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" Click="btnPause_Click" />
-                <Button x:Name="btnSave" IsEnabled="false" Content="Save" Width="120" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10"/>
+                <Button x:Name="btnSave" IsEnabled="false" Content="Save" Width="120" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Click="btnSave_Click"/>
                 <Label Content="Width:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,100,0,0"/>
                 <TextBox x:Name="txtWidth" Text="10" VerticalContentAlignment="Center" Grid.Row="1" Width="50" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,100,0,0"/>
                 <Label Content="Height:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,100,0,0"/>
