@@ -206,6 +206,7 @@ namespace SnakesWithABrain.Models
             {
                 string[] pos = lines[targetIndex].Split(',');
                 FoodLocationsSeen.Add(new Block(int.Parse(pos[0]), int.Parse(pos[1])));
+                targetIndex++;
             }
 
             //then load the brain
@@ -213,10 +214,11 @@ namespace SnakesWithABrain.Models
             {
                 case NetworkType.LSTMCell:
                     {
-                        NeuralNetwork = FileManager.LoadLSTMCell(Guid);
+                        NeuralNetwork = new LSTMCell(loadString);
                         break;
                     }
             }
+
         }
 
 
@@ -724,10 +726,10 @@ namespace SnakesWithABrain.Models
             returnMe += $"[Generation]\n{Generation}\n";
             returnMe += $"[StartingPositionX]\n{StartingPositionX}\n";
             returnMe += $"[StartingPositionY]\n{StartingPositionY}\n";
-            returnMe += "[FoodLocationsSeen]";
+            returnMe += "[FoodLocationsSeen]\n";
             foreach (Block b in FoodLocationsSeen) 
             {
-                returnMe += $"{b.X},{b.Y}";
+                returnMe += $"{b.X},{b.Y}\n";
             }
 
             return returnMe;

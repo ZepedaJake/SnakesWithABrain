@@ -304,6 +304,16 @@ namespace SnakesWithABrain
 
         void TimerTick(object sender, EventArgs e)
         {
+            if (updateUi)
+            {
+                UpdateUi();
+            }
+
+            if (draw)
+            {
+                DrawStuff();
+            }
+
             if (paused)
             {
                 return;
@@ -322,25 +332,13 @@ namespace SnakesWithABrain
                 return;
             }
 
-            if (updateUi)
-            {
-                UpdateUi();
-            }
-
-            if (draw)
-            {
-                DrawStuff();
-            }
-
             if (snakeManager.currentSnake.Life <= 0)
             {
                 timer.Stop();//pause timer for a moment.
                 //ResetGrid();                
                 snakeManager.NextSnake();
                 timer.Start();
-            }
-
-           
+            }           
 
             snakeManager.currentSnake.Move();//This will handle updating position, score, life, death, eating food.
             if (Globals.CurrentTrainingSession.newFoodNeeded)
@@ -515,7 +513,8 @@ namespace SnakesWithABrain
                 txtMutateCount.Text = Globals.CurrentTrainingSession.mutateCount.ToString();
                 txtMaxLength.Text = Globals.CurrentTrainingSession.maxSegmentLength.ToString();
 
-
+                snakeManager = new SnakeManager(new LSTMManager(Globals.CurrentTrainingSession.inputCount, 8));
+                snakeManager.thisGenerationSnakes = FileManager.LoadSnakes();
                 //thisGenLSTMs = FileManager.LoadLSTMs(Globals.CurrentTrainingSession.GUID);
                 //thisGenLSTMs = thisGenLSTMs.OrderByDescending(x => x.fitness).ToList();
                 //for (int a = 0; a < Globals.CurrentTrainingSession.keepCount; a++) //recompete
@@ -633,8 +632,8 @@ namespace SnakesWithABrain
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             FileManager.SaveTrainingSession(Globals.CurrentTrainingSession);
-            snakeManager.SaveAllSnakes();
-            //FileManager.SaveLSTMs(Globals.CurrentTrainingSession.GUID, thisGenLSTMs);
+            FileManager.ClearOldSnakes();
+            snakeManager.SaveAllSnakes();           
         }
     }
 }

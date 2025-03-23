@@ -19,74 +19,74 @@ namespace SnakesWithABrain
         static XmlSerializer xsReplay = new XmlSerializer(typeof(Replay));
         static string localPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SnakesWithABrain");
         //static string localPath = Path.Combine("C:\\LOCAL ONLY", "SnakesWithABrain");//OLD TESTING
-        public static List<LSTMCell> LoadLSTMs(string fileGuid)
-        {
-            List<LSTMCell> returnMe = new List<LSTMCell>();
-            string filePath = Path.Combine(localPath,"LSTMS",fileGuid);
-            DirectoryInfo dir = new DirectoryInfo(filePath);
-            foreach(FileInfo f in dir.GetFiles())
-            {
-                using(StreamReader sr = new StreamReader(f.FullName))
-                {
-                    string data = sr.ReadToEnd();
-                    returnMe.Add(new LSTMCell(data));
-                }
-            }
+        //public static List<LSTMCell> LoadLSTMs(string fileGuid)
+        //{
+        //    List<LSTMCell> returnMe = new List<LSTMCell>();
+        //    string filePath = Path.Combine(localPath,"LSTMS",fileGuid);
+        //    DirectoryInfo dir = new DirectoryInfo(filePath);
+        //    foreach(FileInfo f in dir.GetFiles())
+        //    {
+        //        using(StreamReader sr = new StreamReader(f.FullName))
+        //        {
+        //            string data = sr.ReadToEnd();
+        //            returnMe.Add(new LSTMCell(data));
+        //        }
+        //    }
 
-            return returnMe;
-        }
-        public static bool SaveNeuralNetwork(INeuralNetwork saveMe)
-        {
-            string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
-            string fileName = Path.Combine(filePath, $"NN_{saveMe.Guid}.nn");
-            using (StreamWriter sw = new StreamWriter(fileName))
-            {
-                sw.Write(saveMe.Save());
-            }
+        //    return returnMe;
+        //}
+        //public static bool SaveNeuralNetwork(INeuralNetwork saveMe)
+        //{
+        //    string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
+        //    string fileName = Path.Combine(filePath, $"NN_{saveMe.Guid}.nn");
+        //    using (StreamWriter sw = new StreamWriter(fileName))
+        //    {
+        //        sw.Write(saveMe.Save());
+        //    }
 
-            return true;
-        }
-        public static LSTMCell LoadLSTMCell(string guid)
-        {
-            LSTMCell returnMe = null;
-            string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
-            string fileName = Path.Combine(filePath, $"NN_{guid}.nn");
-            using (StreamReader sr = new StreamReader(fileName))
-            {
-                string data = sr.ReadToEnd();
-                returnMe = new LSTMCell(data);
-            }
-            return returnMe;
-        }
+        //    return true;
+        //}
+        //public static LSTMCell LoadLSTMCell(string guid)
+        //{
+        //    LSTMCell returnMe = null;
+        //    string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
+        //    string fileName = Path.Combine(filePath, $"NN_{guid}.nn");
+        //    using (StreamReader sr = new StreamReader(fileName))
+        //    {
+        //        string data = sr.ReadToEnd();
+        //        returnMe = new LSTMCell(data);
+        //    }
+        //    return returnMe;
+        //}
 
-        public static void SaveLSTMs(string fileGuid, List<LSTMCell> saveMe)
-        {
-            string filePath = Path.Combine(localPath, "LSTMS", fileGuid);
-            if (!Directory.Exists(localPath))
-            {
-                Directory.CreateDirectory(localPath);
-            }
+        //public static void SaveLSTMs(string fileGuid, List<LSTMCell> saveMe)
+        //{
+        //    string filePath = Path.Combine(localPath, "LSTMS", fileGuid);
+        //    if (!Directory.Exists(localPath))
+        //    {
+        //        Directory.CreateDirectory(localPath);
+        //    }
 
-            if (!Directory.Exists(filePath) )
-            {
-                Directory.CreateDirectory(filePath);
-            }
+        //    if (!Directory.Exists(filePath) )
+        //    {
+        //        Directory.CreateDirectory(filePath);
+        //    }
 
-            //clear old files
-            foreach(FileInfo fi in new DirectoryInfo(filePath).GetFiles())
-            {
-                fi.Delete();
-            }
+        //    //clear old files
+        //    foreach(FileInfo fi in new DirectoryInfo(filePath).GetFiles())
+        //    {
+        //        fi.Delete();
+        //    }
 
-            foreach (LSTMCell lstm in saveMe) 
-            {
-                string newFile = Path.Combine(filePath, $"{lstm.Guid}.lstm");
-                using (StreamWriter sw = new StreamWriter(newFile))
-                {
-                    sw.Write(lstm.Save());
-                }
-            }           
-        }
+        //    foreach (LSTMCell lstm in saveMe) 
+        //    {
+        //        string newFile = Path.Combine(filePath, $"{lstm.Guid}.lstm");
+        //        using (StreamWriter sw = new StreamWriter(newFile))
+        //        {
+        //            sw.Write(lstm.Save());
+        //        }
+        //    }           
+        //}
 
         public static string[] GetTrainingSessions()
         {
@@ -139,10 +139,14 @@ namespace SnakesWithABrain
             return returnMe;
         }
 
-        public static bool SaveSnake(Snake saveMe)
+        public static bool SaveSnake(Snake saveMe, bool isReplay = false)
         {
             string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
-            if (!Directory.Exists(filePath)) 
+            if (isReplay)
+            {
+                filePath = Path.Combine(localPath, "Replays");
+            }
+            if (!Directory.Exists(filePath))
             {
                 Directory.CreateDirectory(filePath);
             }
@@ -152,41 +156,46 @@ namespace SnakesWithABrain
 
             using (StreamWriter sw = new StreamWriter(fileName))
             {
-                sw.Write(saveMe.Save());
-            }
-
-            SaveNeuralNetwork(saveMe.NeuralNetwork);
+                sw.Write(saveMe.Save() + saveMe.NeuralNetwork.Save());
+            }            
 
             return true;
-        }
-        public static int SaveReplay(Replay replay, LSTMCell cell)
+        }    
+
+        public static List<Snake> LoadSnakes()
         {
-            //returns an int
-            //0 = good,
-            //1 = training session not saved
-            //2 = error
-            string filePath = Path.Combine(localPath, "TrainingSessions", replay.TrainingGUID);
-            if (!Directory.Exists(filePath))
+            string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);           
+            List<Snake> returnMe = new List<Snake>();
+            if (Directory.Exists(filePath))
             {
-                return 1;                
-            }
-            filePath = Path.Combine(filePath, "Replays");
-            if (!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-            }
-            string fileName = Path.Combine(filePath, $"{replay.GUID}.replay");
-            using (StreamWriter sw = new StreamWriter(fileName))
-            {
-                xsReplay.Serialize(sw, replay);
+                string[] files = Directory.GetFiles(filePath, "*.snake");
+                int i = 0;
+                foreach (string s in files)
+                {
+                    using (StreamReader sr = new StreamReader(s))
+                    {
+                        string data = sr.ReadToEnd();
+                        Snake newSnake = new Snake(data);
+                        returnMe.Add(newSnake);
+                        i++;
+
+                    }
+                }
             }
 
-            fileName = Path.Combine(filePath, $"{cell.Guid}.lstm");
-            using (StreamWriter sw = new StreamWriter(fileName))
+            return returnMe;
+        }
+        
+        public static void ClearOldSnakes()
+        {
+            string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
+            if (Directory.Exists(filePath)) 
             {
-                sw.Write(cell.Save());
+                foreach(string s in Directory.GetFiles(filePath, "*.snake"))
+                {
+                    File.Delete(s);
+                }
             }
-            return 0;
         }
     }
 }
