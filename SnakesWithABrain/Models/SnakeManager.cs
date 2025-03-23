@@ -227,5 +227,26 @@ namespace SnakesWithABrain.Models
             
             return (a / bestSnakes.Count);
         }
+
+        /// <summary>
+        /// Save a snake and its brain
+        /// </summary>
+        /// <param name="snake"></param>
+        /// <returns></returns>
+        public bool SaveSnake(Snake snake)
+        {
+            FileManager.SaveSnake(snake);
+            return true;
+        }
+
+        public bool SaveAllSnakes()
+        {
+            foreach(Snake snake in thisGenerationSnakes)
+            {
+                SaveSnake(snake);
+            }
+            return true;
+        }
+
     }
 }

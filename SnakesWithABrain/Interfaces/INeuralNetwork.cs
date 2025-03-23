@@ -10,7 +10,7 @@
         /// Function to save this network to a file. Returns false by default, true if successful
         /// </summary>
         /// <returns></returns>
-        public bool Save() { return false; }
+        public string Save() { return ""; }
 
         /// <summary>
         /// Rebuilds network from a string. returns true on successful load.

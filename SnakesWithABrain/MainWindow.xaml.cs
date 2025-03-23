@@ -309,7 +309,7 @@ namespace SnakesWithABrain
                 return;
             }
 
-            if (stopped && Globals.CurrentTrainingSession.snakeIndex == 0)
+            if (stopped && Globals.CurrentTrainingSession.snakeIndex == Globals.CurrentTrainingSession.genSize-1 && snakeManager.currentSnake.Life <= 0)
             {
                 btnStart.IsEnabled = true;    
                 btnSave.IsEnabled = true;
@@ -633,6 +633,7 @@ namespace SnakesWithABrain
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             FileManager.SaveTrainingSession(Globals.CurrentTrainingSession);
+            snakeManager.SaveAllSnakes();
             //FileManager.SaveLSTMs(Globals.CurrentTrainingSession.GUID, thisGenLSTMs);
         }
     }
