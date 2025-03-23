@@ -1,4 +1,5 @@
 ﻿using OpenTK.Platform.Windows;
+using ScottPlot;
 using SnakesWithABrain.Enums;
 using SnakesWithABrain.Interfaces;
 using SnakesWithABrain.Statics;
@@ -17,6 +18,14 @@ namespace SnakesWithABrain.Models
 {
     public class Snake
     {
+        //Fields to Save
+        //NeuralNetwork
+        //Guid
+        //Generation
+        //StartingPosX
+        //StartingPosY
+        //FoodLocationsSeen
+
         /// <summary>
         /// Neural network of this snake.
         /// </summary>
@@ -156,6 +165,8 @@ namespace SnakesWithABrain.Models
         /// </summary>
         public int Life { get; set; } = 0;
 
+        public NetworkType NetworkType { get; set; }
+
         /// <summary>
         /// Simple Constructor. A snakes needs a brain.
         /// </summary>
@@ -164,6 +175,8 @@ namespace SnakesWithABrain.Models
         {
             NeuralNetwork = neuralNetwork;
             Guid = System.Guid.NewGuid().ToString();
+            //assign same guid to this NN
+            NeuralNetwork.Guid = Guid;
         }
 
         /// <summary>
@@ -177,10 +190,42 @@ namespace SnakesWithABrain.Models
         /// <param name="loadString"></param>
         public Snake(string loadString)
         {
+            string[] lines = loadString.Split('\n');
+            int targetIndex = Array.IndexOf(lines, "[Guid]") + 1;//line after identifier is the info
+            Guid = lines[targetIndex];
 
+            targetIndex = Array.IndexOf(lines, "[Generation]") + 1;
+            Generation = int.Parse(lines[targetIndex]);
+
+            targetIndex = Array.IndexOf(lines, "[StartingPositionX]") + 1;
+            StartingPositionX = int.Parse(lines[targetIndex]);
+            targetIndex = Array.IndexOf(lines, "[StartingPositionY]") + 1;
+            StartingPositionY = int.Parse(lines[targetIndex]);
+            targetIndex = Array.IndexOf(lines, "[FoodLocationsSeen]") + 1;
+            while (targetIndex < lines.Length && lines[targetIndex].Contains(","))
+            {
+                string[] pos = lines[targetIndex].Split(',');
+                FoodLocationsSeen.Add(new Block(int.Parse(pos[0]), int.Parse(pos[1])));
+            }
+
+            //then load the brain
+            switch (Globals.CurrentTrainingSession.networkType)
+            {
+                case NetworkType.LSTMCell:
+                    {
+                        NeuralNetwork = FileManager.LoadLSTMCell(Guid);
+                        break;
+                    }
+            }
         }
 
-        public void PrepareForTraining()
+
+        /// <summary>
+        /// Set Properties for this snake's training session.
+        /// </summary>
+        /// <param name="startX"></param>
+        /// <param name="startY"></param>
+        public void PrepareForTraining(int startX = -1, int startY = -1)
         {
             Life = (int)(MoreMath.Hypotenuse(Globals.CurrentTrainingSession.arrayX, Globals.CurrentTrainingSession.arrayY) * 2);//set life in relation to play area size and snake size.
             Score = 0;
@@ -190,10 +235,27 @@ namespace SnakesWithABrain.Models
             FoodEaten = 0;
             _movesSinceLastFood = 0;
             FoodLocationsSeen.Clear();
-            PositionX = rng.Next(Globals.CurrentTrainingSession.arrayX);
-            PositionY = rng.Next(Globals.CurrentTrainingSession.arrayY);
+            if (startX == -1)
+            {
+                PositionX = rng.Next(Globals.CurrentTrainingSession.arrayX);
+            }
+            else
+            {
+                PositionX = startX;
+            }
+
+            if (startY == -1) 
+            {
+                PositionY = rng.Next(Globals.CurrentTrainingSession.arrayY);
+            }
+            else
+            {
+                PositionY = startY;
+            }
             StartingPositionX = PositionX;
             StartingPositionY = PositionY;
+            Guid = System.Guid.NewGuid().ToString();//Update GUID so that if this is a recycled snake and is saved again it does not overwrite its previous file
+            NeuralNetwork.Guid = Guid;
             UpdateDistanceFromFood();
             UpdateDisatanceFromFoodAtSpawn();           
         }
@@ -650,5 +712,25 @@ namespace SnakesWithABrain.Models
             _inputs = inputs;
         }
 
+        /// <summary>
+        /// Creates file contents for use from teh file manager.
+        /// This is really more like "ToString()"
+        /// </summary>
+        /// <returns></returns>
+        public string Save()
+        {
+            string returnMe = "";
+            returnMe += $"[Guid]\n{Guid}\n";
+            returnMe += $"[Generation]\n{Generation}\n";
+            returnMe += $"[StartingPositionX]\n{StartingPositionX}\n";
+            returnMe += $"[StartingPositionY]\n{StartingPositionY}\n";
+            returnMe += "[FoodLocationsSeen]";
+            foreach (Block b in FoodLocationsSeen) 
+            {
+                returnMe += $"{b.X},{b.Y}";
+            }
+
+            return returnMe;
+        }
     }
 }

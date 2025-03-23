@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using SnakesWithABrain.Statics;
+using System.Data;
+using SnakesWithABrain.Interfaces;
 
 namespace SnakesWithABrain
 {
@@ -30,6 +33,29 @@ namespace SnakesWithABrain
                 }
             }
 
+            return returnMe;
+        }
+        public static bool SaveNeuralNetwork(INeuralNetwork saveMe)
+        {
+            string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
+            string fileName = Path.Combine(filePath, $"NN_{saveMe.Guid}.nn");
+            using (StreamWriter sw = new StreamWriter(fileName))
+            {
+                sw.Write(saveMe.Save());
+            }
+
+            return true;
+        }
+        public static LSTMCell LoadLSTMCell(string guid)
+        {
+            LSTMCell returnMe = null;
+            string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
+            string fileName = Path.Combine(filePath, $"NN_{guid}.nn");
+            using (StreamReader sr = new StreamReader(fileName))
+            {
+                string data = sr.ReadToEnd();
+                returnMe = new LSTMCell(data);
+            }
             return returnMe;
         }
 
@@ -73,6 +99,7 @@ namespace SnakesWithABrain
             }
             
             
+            
             return returnMe;
         }
 
@@ -112,6 +139,26 @@ namespace SnakesWithABrain
             return returnMe;
         }
 
+        public static bool SaveSnake(Snake saveMe)
+        {
+            string filePath = Path.Combine(localPath, "TrainingSessions", Globals.CurrentTrainingSession.GUID);
+            if (!Directory.Exists(filePath)) 
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            string fileName = Path.Combine(filePath, $"Snake_{saveMe.Guid}.snake");
+
+
+            using (StreamWriter sw = new StreamWriter(fileName))
+            {
+                sw.Write(saveMe.Save());
+            }
+
+            SaveNeuralNetwork(saveMe.NeuralNetwork);
+
+            return true;
+        }
         public static int SaveReplay(Replay replay, LSTMCell cell)
         {
             //returns an int

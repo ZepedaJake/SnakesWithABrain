@@ -1,4 +1,5 @@
 ﻿using System;
+using SnakesWithABrain.Enums;
 using SnakesWithABrain.Interfaces;
 
 namespace SnakesWithABrain
@@ -43,15 +44,12 @@ namespace SnakesWithABrain
         public double[] cellGate;
 
         Random random = new Random();
-
         public string Guid { get; set; } = "";
         public LSTMCell(string loadMe)
         {
             string[] lines = loadMe.Split('\n');
             int targetIndex = Array.IndexOf(lines, "[Guid]") + 1;//line after identifier is the info
             Guid = lines[targetIndex];
-
-            targetIndex = Array.IndexOf(lines, "[MutateChance]") + 1;
 
             targetIndex = Array.IndexOf(lines, "[InputSize]") + 1;
             inputSize = int.Parse(lines[targetIndex]);
